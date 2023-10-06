@@ -37,9 +37,27 @@ router.post('/guardarRegistro',[
     validarCampos,
 ], registro.guardar)
 
+//rutas de registro
+router.post('/guardarRegistro/admin',[
+
+    //validacion de campos
+    check('nickname', 'El nickname es obligatorio').not().isEmpty(),
+    check('nickname', ).custom( nombreExiste),
+    check('correo', 'correo no es valido').isEmail(),
+    check('correo', ).custom( emailExiste),
+    check('password', 'contraseña no es valido').isLength({ min: 6}),
+    //check('rol', 'No es un rol valido').isIn(['ADMIN_ROLE', 'USER_ROLE']),
+    check('rol', ).custom( esRoleValido),
+    validarCampos,
+], registro.guardarAdmin)
+
+
 
 //listar los registro
-router.get('/listarRegistro', registro.listar)
+router.get('/listarRegistro',
+ validarJWT,
+ esAdminRole,
+ registro.listar)
 
 
 //modificar registro
@@ -59,9 +77,9 @@ router.delete('/eliminar/:id',[
     validarJWT,
     //esTenerRoles('USUARIO','ADMINISTRADOR_ROLE'),
     esAdminRole,
-check('id', 'No es un ID valido').isMongoId(),
-check('id', ).custom( existeIdUsuario),
-validarCampos
+    check('id', 'No es un ID valido').isMongoId(),
+    check('id', ).custom( existeIdUsuario),
+    validarCampos
 ],registro.eliminar)
 
 

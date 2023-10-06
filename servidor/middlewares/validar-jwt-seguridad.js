@@ -31,10 +31,11 @@ const validarJWT = async (req, res, next) => {
             
         }
         req.registrosUsu = registrosUsu
+        //req.app.set(registrosUsu)
         next();
 
     } catch (error) {
-        console.log(error)
+        console.log(error.message)
         res.status(401).json({
             msg:'token no valido'
         })

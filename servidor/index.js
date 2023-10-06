@@ -7,6 +7,7 @@ import mongoose from 'mongoose'
 import bodyParser from 'body-parser'
 import router from './routes/apis.js'
 import login from './routes/auth.js'
+import categorias from './routes/categorias.js'
 import dot from 'dotenv'
 //import db from './database/db.js'
 
@@ -32,6 +33,7 @@ app.use(bodyParser.urlencoded({ extended: false}))
 app.use(bodyParser.json())
 app.use('/api', router)
 app.use('/api/auth', login)
+app.use('/api/categorias', categorias)
 
 
 io.on('connection', (socket)=>{

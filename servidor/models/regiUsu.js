@@ -26,6 +26,10 @@ const RegisUsuSchema = new Schema({
         type: Boolean,
         default: true
     },
+    tiempoSesion: {
+        type: Date,
+        default: null
+    },
     google: {
         type: Boolean,
         default: false

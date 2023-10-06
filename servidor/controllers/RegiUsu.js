@@ -1,5 +1,6 @@
 import { response } from 'express';
 import Regis from '../models/regiUsu.js';
+import { generarJWT } from '../helpers/generar-jwt.js';
 import bcryptjs from "bcryptjs"
 
 
@@ -66,6 +67,14 @@ var registrousu = {
 
             var params = req.body;
 
+
+            // Verificar que el rol sea "usuario"
+        if (params.rol !== "USUARIO") {
+            return res.status(400).json({
+                error: `el rol debe ser usuario`
+            });
+        }
+
             // Crear una instancia de Regis (si es una clase o función)
             const registro = new Regis({
                 nickname: params.nickname,
@@ -81,11 +90,14 @@ var registrousu = {
 
             //aqui se guarda la info en la db
             const guardarApi = await registro.save();
+            const token = await generarJWT(guardarApi.id)
             
             
             res.status(200).json({
                 msg: 'Registro Completado',
-                guardarApi
+                guardarApi,
+                token
+              
                 
             });
 
@@ -98,6 +110,58 @@ var registrousu = {
             });
         }
     },
+
+    guardarAdmin: async (req, res = response) => {
+        
+
+        try {
+
+            
+
+            var params = req.body;
+
+
+            if (params.rol !== "ADMINISTRADOR_ROLE") {
+                return res.status(400).json({
+                    error: `el rol debe ser administrador`
+                });
+            }
+
+            // Crear una instancia de Regis (si es una clase o función)
+            const registro = new Regis({
+                nickname: params.nickname,
+                correo: params.correo,
+                password: params.password,
+                rol: params.rol
+
+            });
+
+            //encriptar la contraseña
+            const salt = bcryptjs.genSaltSync(10);
+            registro.password = bcryptjs.hashSync(params.password.toString(), salt)
+
+            //aqui se guarda la info en la db
+            const guardarApi = await registro.save();
+            const token = await generarJWT(guardarApi.id)
+            
+            
+            res.status(200).json({
+                msg: 'Registro Completado',
+                guardarApi,
+                token
+                
+            });
+
+
+        } catch (error) {
+            console.error("Error en la operación:", error);
+
+            res.status(500).json({
+                error: "Hubo un error en la operación"
+            });
+        }
+    },
+
 
 
     modificar: async (req,res) => {
